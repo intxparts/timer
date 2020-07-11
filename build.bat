@@ -1,1 +1,1 @@
-"cl /Wall /O2 timer.c" 
+cl /Wall /O2 timer.c

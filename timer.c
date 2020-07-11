@@ -18,9 +18,10 @@
 
 char* concat(char* s1, char* s2)
 {
-	char* new_str = (char*)malloc(strlen(s1) + strlen(s2) + 1);
+	char* new_str = (char*)malloc(strlen(s1) + 1 + strlen(s2) + 1);
 	new_str[0] = '\0';
 	strcat(new_str, s1);
+	strcat(new_str," ");
 	strcat(new_str, s2);
 	return new_str;
 }
