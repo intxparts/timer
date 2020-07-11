@@ -3,25 +3,28 @@
 #include <time.h>
 #include <string.h>
 
-#ifdef _WIN32
+#define BUFFER_SIZE 512
 
+#ifdef _WIN32
+	#define popen _popen
+	#define pclose _pclose
 #endif
 
 #ifdef linux
-
 #endif
 
 #define TICK(T) clock_t T = clock()
 #define TOCK(T) printf("timer::execution time: %.10f.\n", (double)(clock() - (T)) / CLOCKS_PER_SEC)
 
-#ifdef _WIN32
-void start_process(char* command)
+char* concat(char* s1, char* s2)
 {
-
+	char* new_str = (char*)malloc(strlen(s1) + strlen(s2) + 1);
+	new_str[0] = '\0';
+	strcat(new_str, s1);
+	strcat(new_str, s2);
+	return new_str;
 }
-#endif
 
-#ifdef linux
 void start_process(char* command)
 {
 	FILE* process = popen(command, "r");
@@ -32,7 +35,6 @@ void start_process(char* command)
 	}
 	printf("timer::executing command: %s\n", command);
 
-	const int BUFFER_SIZE = 128;
 	char buffer[BUFFER_SIZE];
 	while (fgets(buffer, BUFFER_SIZE, process))
 	{
@@ -42,26 +44,16 @@ void start_process(char* command)
 	int process_result = pclose(process);
 	printf("\ntimer::process exit code: %d\n", process_result);
 }
-#endif
 
 char* process_args(int argc, char* argv[])
 {
-	const int BUFFER_SIZE = 512;
-	char* buffer = (char*) malloc(BUFFER_SIZE*sizeof(char));
-	int t_len = 0;
-
+	char* buffer = (char*)malloc(1*sizeof(char));
+	buffer[0] = '\0';
 	for (int i = 1; i < argc; ++i)
 	{
-		int len = strlen(argv[i]);
-		t_len += len;
-		if (t_len >= BUFFER_SIZE)
-		{
-			printf("timer::invalid command: exceeds buffer size of: %d\n", BUFFER_SIZE);
-			free(buffer);
-			return NULL;
-		}
-
-		strcat(buffer, argv[i]);	
+		char * c = concat(buffer, argv[i]);
+		free(buffer);
+		buffer = c;
 	}
 	return buffer;
 }
@@ -69,10 +61,6 @@ char* process_args(int argc, char* argv[])
 int main(int argc, char* argv[])
 {
 	char* command = process_args(argc, argv);
-	if (command == NULL)
-	{
-		return 1;
-	}
 	TICK(t);
 	start_process(command);
 	TOCK(t);
@@ -80,3 +68,4 @@ int main(int argc, char* argv[])
 	return 0;
 
 }
+
