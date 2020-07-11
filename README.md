@@ -7,10 +7,11 @@ A simple cross-platform console application written in C to compute the executio
 
 		Windows
 
-			.\timer.exe dir /S
-
+			[> .\timer.exe dir /S
+			timer::execution time: 0.0002540000.
+			
 		Linux
 
-			./timer ls -a
-
+			[> ./timer ls -a
+			timer::execution time: 0.0001600000.
 
